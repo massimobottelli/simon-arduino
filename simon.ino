@@ -1,19 +1,19 @@
-// Simon game
+// Simon.ino game
 
 #define NOTE1 165 // blue tone: E 3
 #define NOTE2 139 // yellow tone: C♯ 3
 #define NOTE3 220 // red tone: A 3
 #define NOTE4 82 // green tone: E 2 
 
-#define BUTTON1 11 // blue button
-#define BUTTON2 10 // yellow button
-#define BUTTON3 9 // red button
-#define BUTTON4 8 // green button
+#define LED1 8 // blue button
+#define LED2 9 // yellow button
+#define LED3 10 // red button
+#define LED4 11 // green button
 
-#define LED1 7 // blue LED
-#define LED2 6 // yellow LED
-#define LED3 5 // red LED
-#define LED4 4 // green LED
+#define BUTTON1 4 // blue LED
+#define BUTTON2 5 // yellow LED
+#define BUTTON3 6 // red LED
+#define BUTTON4 7 // green LED
 
 #define BUZZER 2
 
@@ -22,6 +22,8 @@ int sequence[100];
 int sequenceLength = 0;
 int currentIndex = 0;
 int error = 0;
+int prevNumber = 0;
+int randomNumber = random(1, 5);
 
 
 void play(int led, int note) {
@@ -37,10 +39,10 @@ void setup()
   Serial.begin(9600);
 
   // initialize buttons
-  pinMode(BUTTON1, INPUT);
-  pinMode(BUTTON2, INPUT);
-  pinMode(BUTTON3, INPUT);
-  pinMode(BUTTON4, INPUT);
+  pinMode(BUTTON1, INPUT_PULLUP);
+  pinMode(BUTTON2, INPUT_PULLUP);
+  pinMode(BUTTON3, INPUT_PULLUP);
+  pinMode(BUTTON4, INPUT_PULLUP);
 
   // initialize LEDs
   pinMode(LED1, OUTPUT);
@@ -50,6 +52,14 @@ void setup()
   
   // initialize BUZZER
   pinMode(BUZZER, OUTPUT);
+
+  // initial sequence
+  play(LED1, NOTE1);
+  play(LED2, NOTE2);
+  play(LED3, NOTE3);
+  play(LED4, NOTE4);
+
+  delay(1000);
 }
 
 
@@ -59,9 +69,11 @@ void loop()
     
   // add random number to sequence
   randomSeed(analogRead(0));
-  int randomNumber = random(1, 5);
+  while (randomNumber == prevNumber) 
+    randomNumber = random(1, 5);
   sequence[sequenceLength] = randomNumber;
   sequenceLength++;
+  prevNumber = randomNumber;
   }
   else {
     
@@ -94,7 +106,7 @@ void loop()
   
   // Play the sequence
   for (int i = 0; i < sequenceLength; i++) {
-	if (sequence[i] == 1) play(LED1, NOTE1);
+	  if (sequence[i] == 1) play(LED1, NOTE1);
     if (sequence[i] == 2) play(LED2, NOTE2);
     if (sequence[i] == 3) play(LED3, NOTE3);
     if (sequence[i] == 4) play(LED4, NOTE4);
@@ -106,11 +118,11 @@ void loop()
 
     // Check if any button is pressed
     
-    if (digitalRead(BUTTON1) == HIGH) {
+    if (digitalRead(BUTTON1) == LOW) {
       // Button 1 is pressed
       Serial.println("1");
       
-      while (digitalRead(BUTTON1) == HIGH) {
+      while (digitalRead(BUTTON1) == LOW) {
         digitalWrite(LED1, HIGH);
         tone(BUZZER, NOTE1);
       }
@@ -126,13 +138,13 @@ void loop()
         error = 1;
         return;
       }
-    delay(500);
+    delay(100);
       
-    } else if (digitalRead(BUTTON2) == HIGH) {
+    } else if (digitalRead(BUTTON2) == LOW) {
       // Button 2 is pressed
       Serial.println("2");  
       
-      while (digitalRead(BUTTON2) == HIGH) {
+      while (digitalRead(BUTTON2) == LOW) {
         digitalWrite(LED2, HIGH);
         tone(BUZZER, NOTE2);
       }
@@ -149,13 +161,13 @@ void loop()
         error = 1;
         return;
       }
-    delay(500);
+    delay(100);
       
-    } else if (digitalRead(BUTTON3) == HIGH) {
+    } else if (digitalRead(BUTTON3) == LOW) {
       // Button 3 is pressed
       Serial.println("3");
       
-      while (digitalRead(BUTTON3) == HIGH) {
+      while (digitalRead(BUTTON3) == LOW) {
         digitalWrite(LED3, HIGH);
         tone(BUZZER, NOTE3);
       }
@@ -171,13 +183,13 @@ void loop()
         error = 1;
         return;
       }
-    delay(500);
+    delay(100);
       
-    } else if (digitalRead(BUTTON4) == HIGH) {
+    } else if (digitalRead(BUTTON4) == LOW) {
       // Button 4 is pressed
       Serial.println("4");
       
-      while (digitalRead(BUTTON4) == HIGH) {
+      while (digitalRead(BUTTON4) == LOW) {
         digitalWrite(LED4, HIGH);
         tone(BUZZER, NOTE4);
       }
@@ -193,7 +205,7 @@ void loop()
         error = 1;
         return;
       }
-    delay(500);
+    delay(100);
     }
   }
   
@@ -201,5 +213,12 @@ void loop()
     // sequence correct, add one number
     Serial.println("Sequence correct, add one number");
     currentIndex = 0;
+    
+    delay(500);
+
   }
 }
+  
+  
+  
+  
