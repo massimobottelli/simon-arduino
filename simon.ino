@@ -70,7 +70,7 @@ void handleUserInput(int button, int led, int note, int expected) {
     }
     digitalWrite(led, LOW);           
     noTone(BUZZER);
-	// Check correct sequence
+    // Check correct sequence
     if (sequence[currentIndex] == expected) {
       currentIndex++;
     } else {
@@ -78,6 +78,13 @@ void handleUserInput(int button, int led, int note, int expected) {
       return;
     }
   }
+}
+
+void getUserSequence() {
+  handleUserInput(BUTTON1, LED1, NOTE1, 1); 
+  handleUserInput(BUTTON2, LED2, NOTE2, 2); 
+  handleUserInput(BUTTON3, LED3, NOTE3, 3); 
+  handleUserInput(BUTTON4, LED4, NOTE4, 4); 
 }
 
 void playNote(int led, int note) {
@@ -123,10 +130,7 @@ void loop()
 
     // Get user sequence
     while ((currentIndex < sequenceLength) && (error == 0)) {
-      handleUserInput(BUTTON1, LED1, NOTE1, 1); 
-      handleUserInput(BUTTON2, LED2, NOTE2, 2); 
-      handleUserInput(BUTTON3, LED3, NOTE3, 3); 
-      handleUserInput(BUTTON4, LED4, NOTE4, 4); 
+      getUserSequence();
     }
     currentIndex = 0;
     delay(500);
